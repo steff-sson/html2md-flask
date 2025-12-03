@@ -27,22 +27,30 @@ pipenv run python run.py
 cd /home/user/docker
 git clone https://github.com/DEIN-USERNAME/html2md-flask.git
 cd html2md-flask
-docker-compose -f docker-compose.prod.yml up -d
+docker-compose up -d
 ```
 
-**SWAG Config:**
+### Nginx Config
+
+**Für SWAG:**
 ```bash
-cp nginx/html2md.subdomain.conf.example \
+cp nginx/html2md-swag.conf.example \
    /pfad/zu/swag/nginx/proxy-confs/html2md.subdomain.conf
 docker restart swag
+```
+
+**Für Standard Nginx**
+```
+cp nginx/html2md.conf.example /etc/nginx/sites-available/html2md.conf
+# Passe server_name und SSL-Pfade an
+nginx -t
+systemctl reload nginx
 ```
 
 ## Updates
 
 ```bash
-cd /home/user/docker/html2md-flask
-docker-compose -f docker-compose.prod.yml pull
-docker-compose -f docker-compose.prod.yml up -d
+docker compose pull && docker compose up -d
 ```
 
 ## Tech Stack
