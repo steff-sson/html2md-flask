@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Diese App wurde mit Hilfe von KI erstellt, nach dem Prinzip "human in the loop"
 """
 Application Entry Point
 """
