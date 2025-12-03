@@ -1,0 +1,21 @@
+---
+services:
+  html2md-flask:
+    image: DEIN-DOCKERHUB-USERNAME/html2md-flask:latest
+    container_name: html2md-flask
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Berlin
+      - FLASK_ENV=production
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - frontend
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+
+networks:
+  frontend:
+    external: true
