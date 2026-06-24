@@ -4,6 +4,7 @@ Flask Routes
 
 from flask import render_template, request, jsonify, send_file
 from app.scraper import scrape_url_to_markdown
+from app import limiter
 from io import BytesIO
 import re
 
@@ -15,6 +16,7 @@ def init_routes(app):
         return render_template('index.html')
     
     @app.route('/scrape', methods=['POST'])
+    @limiter.limit("10 per minute")
     def scrape():
         """API Endpoint für Scraping"""
         data = request.get_json()
@@ -39,6 +41,7 @@ def init_routes(app):
         })
     
     @app.route('/download', methods=['POST'])
+    @limiter.limit("10 per minute")
     def download():
         """Download Markdown als .md Datei"""
         data = request.get_json()

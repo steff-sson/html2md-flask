@@ -18,6 +18,7 @@ COPY run.py .
 COPY requirements.txt .
 COPY --from=build /build/app/static/css/output.css ./app/static/css/output.css
 RUN python3 -m venv .venv && .venv/bin/pip install --no-cache-dir -r requirements.txt
+RUN apt-get purge -y --auto-remove gcc && rm -rf /var/lib/apt/lists/*
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
 EXPOSE 5000

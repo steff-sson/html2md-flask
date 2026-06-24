@@ -6,6 +6,8 @@ const previewSection = document.getElementById('previewSection');
 const markdownPreview = document.getElementById('markdownPreview');
 const loadingSpinner = document.getElementById('loadingSpinner');
 
+const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
 let currentMarkdown = '';
 let currentUrl = '';
 
@@ -32,7 +34,10 @@ scrapeBtn.addEventListener('click', async () => {
     try {
         const response = await fetch('/scrape', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify({ url })
         });
 
@@ -61,7 +66,10 @@ downloadBtn.addEventListener('click', async () => {
     try {
         const response = await fetch('/download', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
             body: JSON.stringify({
                 markdown: currentMarkdown,
                 url: currentUrl

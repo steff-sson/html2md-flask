@@ -33,3 +33,7 @@ app/static/css/output.css
 
 # Node
 node_modules/
+
+# Logs
+logs/
+*.log
