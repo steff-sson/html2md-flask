@@ -1,0 +1,15 @@
+{
+  "name": "html2md-flask",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i app/static/css/style.css -o app/static/css/output.css",
+    "watch:css": "npx @tailwindcss/cli -i app/static/css/style.css -o app/static/css/output.css --watch"
+  },
+  "dependencies": {
+    "@steff-sson/automation-themes": "github:steff-sson/automation-themes"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4"
+  }
+}

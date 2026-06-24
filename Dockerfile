@@ -1,26 +1,24 @@
-FROM python:3.11-slim
+# Build stage: Tailwind CSS
+FROM node:20-alpine AS build
+WORKDIR /build
+COPY package*.json ./
+RUN npm ci
+COPY app/static/css/ ./app/static/css/
+COPY app/templates/ ./app/templates/
+RUN npx @tailwindcss/cli -i ./app/static/css/style.css -o ./app/static/css/output.css --minify
 
-WORKDIR /app
-
-# System dependencies
-RUN apt-get update && apt-get install -y \
+# Runtime stage
+FROM python:3.13-slim
+RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     && rm -rf /var/lib/apt/lists/*
-
-# Python dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# App code
+WORKDIR /app
 COPY app/ ./app/
 COPY run.py .
-
-# Non-root user
+COPY requirements.txt .
+COPY --from=build /build/app/static/css/output.css ./app/static/css/output.css
+RUN python3 -m venv .venv && .venv/bin/pip install --no-cache-dir -r requirements.txt
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
 USER appuser
-
-# Port
 EXPOSE 5000
-
-# Start with gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "run:app"]
+CMD [".venv/bin/gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--timeout", "120", "run:app"]

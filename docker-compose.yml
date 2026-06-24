@@ -1,7 +1,7 @@
 ---
 services:
   html2md-flask:
-    image: DEIN-DOCKERHUB-USERNAME/html2md-flask:latest
+    image: ghcr.io/steff-sson/html2md-flask:latest
     container_name: html2md-flask
     environment:
       - PUID=1000

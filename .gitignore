@@ -27,3 +27,9 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Tailwind Build
+app/static/css/output.css
+
+# Node
+node_modules/

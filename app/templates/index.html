@@ -1,159 +1,60 @@
+{% from "automation-themes/templates/_components.html" import card %}
+
 <!DOCTYPE html>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Web Scraper → Markdown</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/output.css">
 </head>
-<body class="bg-gray-50 min-h-screen">
-    
+<body class="bg-background min-h-screen">
+
     <div class="container mx-auto px-4 py-12 max-w-5xl">
-        
+
         <!-- Header -->
         <div class="text-center mb-12">
-            <h1 class="text-4xl font-bold text-gray-800 mb-2">🔄 Web → Markdown</h1>
-            <p class="text-gray-600">Extrahiere Hauptinhalte von Webseiten als Markdown</p>
+            <h1 class="text-4xl font-bold text-text mb-2">Web → Markdown</h1>
+            <p class="text-text-muted">Extrahiere Hauptinhalte von Webseiten als Markdown</p>
         </div>
-        
+
         <!-- Input Section -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <div class="flex gap-3">
-                <input 
-                    type="text" 
-                    id="urlInput" 
-                    placeholder="https://example.com/artikel"
-                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
-                />
-                <button 
-                    id="scrapeBtn"
-                    class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
+        {% call card() %}
+            <div class="flex flex-col sm:flex-row gap-3">
+                <input type="text" id="urlInput" name="url"
+                       placeholder="https://example.com/artikel"
+                       class="flex-1 px-3 py-2 bg-surface-light border border-border rounded-lg text-text text-sm focus:outline-none focus:ring-2 focus:ring-accent">
+                <button id="scrapeBtn" class="px-6 py-2 bg-accent text-white rounded-lg hover:bg-accent/90 transition-colors font-semibold">
                     Scrape
                 </button>
             </div>
-            
+
             <!-- Error Message -->
-            <div id="errorMsg" class="hidden mt-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg"></div>
-        </div>
-        
+            <div id="errorMsg" class="hidden mt-4 p-3 bg-error/10 text-error border border-error/20 rounded-lg text-sm"></div>
+        {% endcall %}
+
         <!-- Preview Section -->
-        <div id="previewSection" class="hidden bg-white rounded-lg shadow-md p-6">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold text-gray-800">📄 Vorschau</h2>
-                <button 
-                    id="downloadBtn"
-                    class="px-6 py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors"
-                >
-                    ⬇ Download .md
-                </button>
-            </div>
-            
-            <div class="border border-gray-200 rounded-lg p-6 bg-gray-50 overflow-auto max-h-96">
-                <pre id="markdownPreview" class="whitespace-pre-wrap font-mono text-sm text-gray-800"></pre>
-            </div>
+        <div id="previewSection" class="hidden mt-6">
+            {% call card() %}
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-text">Vorschau</h2>
+                    <button id="downloadBtn" class="px-6 py-2 bg-success text-white rounded-lg hover:bg-success/90 transition-colors font-semibold">
+                        Download .md
+                    </button>
+                </div>
+                <pre id="markdownPreview" class="bg-surface-light border border-border rounded-lg p-6 font-mono text-sm text-text whitespace-pre-wrap overflow-auto max-h-96"></pre>
+            {% endcall %}
         </div>
-        
+
         <!-- Loading Spinner -->
         <div id="loadingSpinner" class="hidden text-center py-12">
-            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-            <p class="mt-4 text-gray-600">Scraping läuft...</p>
+            <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-accent"></div>
+            <p class="mt-4 text-text-muted">Scraping läuft...</p>
         </div>
-        
+
     </div>
-    
-    <script>
-        const urlInput = document.getElementById('urlInput');
-        const scrapeBtn = document.getElementById('scrapeBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const errorMsg = document.getElementById('errorMsg');
-        const previewSection = document.getElementById('previewSection');
-        const markdownPreview = document.getElementById('markdownPreview');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        
-        let currentMarkdown = '';
-        let currentUrl = '';
-        
-        // Enter-Taste im Input
-        urlInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') scrapeBtn.click();
-        });
-        
-        // Scrape Button
-        scrapeBtn.addEventListener('click', async () => {
-            const url = urlInput.value.trim();
-            
-            if (!url) {
-                showError('Bitte URL eingeben');
-                return;
-            }
-            
-            // UI Reset
-            hideError();
-            previewSection.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
-            scrapeBtn.disabled = true;
-            
-            try {
-                const response = await fetch('/scrape', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ url })
-                });
-                
-                const data = await response.json();
-                
-                if (!response.ok) {
-                    throw new Error(data.error || 'Fehler beim Scraping');
-                }
-                
-                currentMarkdown = data.markdown;
-                currentUrl = data.url;
-                
-                markdownPreview.textContent = currentMarkdown;
-                previewSection.classList.remove('hidden');
-                
-            } catch (error) {
-                showError(error.message);
-            } finally {
-                loadingSpinner.classList.add('hidden');
-                scrapeBtn.disabled = false;
-            }
-        });
-        
-        // Download Button
-        downloadBtn.addEventListener('click', async () => {
-            try {
-                const response = await fetch('/download', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        markdown: currentMarkdown,
-                        url: currentUrl
-                    })
-                });
-                
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = response.headers.get('content-disposition')?.split('filename=')[1] || 'output.md';
-                a.click();
-                
-            } catch (error) {
-                showError('Download fehlgeschlagen');
-            }
-        });
-        
-        function showError(message) {
-            errorMsg.textContent = message;
-            errorMsg.classList.remove('hidden');
-        }
-        
-        function hideError() {
-            errorMsg.classList.add('hidden');
-        }
-    </script>
-    
+
+    <script src="/static/app.js" defer></script>
+
 </body>
 </html>
