@@ -9,6 +9,7 @@ services:
       - PGID=1000
       - TZ=Europe/Berlin
       - FLASK_ENV=production
+      - FLASK_SECRET_KEY=${FLASK_SECRET_KEY:-change-me-in-production-use-openssl-rand-hex-32}
     volumes:
       - ./logs:/app/logs
     networks:

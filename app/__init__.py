@@ -3,7 +3,7 @@ Flask Application Factory
 """
 
 import os
-from flask import Flask
+from flask import Flask, jsonify
 from flask_wtf.csrf import CSRFProtect
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -24,6 +24,14 @@ def create_app():
 
     # Rate Limiter aktivieren
     limiter.init_app(app)
+
+    # 429 als JSON statt HTML
+    @app.errorhandler(429)
+    def ratelimit_handler(e):
+        return jsonify({
+            "error": "rate_limit_exceeded",
+            "message": "Zu viele Anfragen. Bitte warten Sie einen Moment."
+        }), 429
 
     # automation-themes Templates als Jinja2-Pfad registrieren
     themes_base = Path(app.root_path).parent / "node_modules" / "@steff-sson"
