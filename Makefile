@@ -15,7 +15,7 @@ css-watch:
 	npx @tailwindcss/cli -i app/static/css/style.css -o app/static/css/output.css --watch
 
 docker-build:
-	docker build -t ghcr.io/steff-sson/html2md-flask:latest .
+	docker compose build
 
 docker-up:
 	docker compose up -d

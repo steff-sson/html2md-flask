@@ -1,6 +1,7 @@
 ---
 services:
   html2md-flask:
+    build: .
     image: ghcr.io/steff-sson/html2md-flask:latest
     container_name: html2md-flask
     environment:

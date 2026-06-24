@@ -25,8 +25,7 @@ make dev
 ### Docker
 
 ```bash
-docker build -t ghcr.io/steff-sson/html2md-flask:latest .
-docker compose up -d
+docker compose up -d --build
 ```
 
 ### Nginx Config
@@ -61,7 +60,7 @@ systemctl reload nginx
 ## Updates
 
 ```bash
-docker compose pull && docker compose up -d
+git pull && docker compose up -d --build
 ```
 
 ## Tech Stack
