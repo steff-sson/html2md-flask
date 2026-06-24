@@ -53,9 +53,6 @@ systemctl reload nginx
 | `make dev` | Flask Dev-Server (Port 5000) |
 | `make css-build` | Tailwind CSS bauen |
 | `make css-watch` | Tailwind CSS watch mode |
-| `make docker-build` | Docker Image bauen |
-| `make docker-up` | Docker Container starten |
-| `make docker-down` | Docker Container stoppen |
 
 ## Updates
 
