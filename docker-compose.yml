@@ -1,8 +1,7 @@
 ---
 services:
   html2md-flask:
-    build: .
-    image: ghcr.io/steff-sson/html2md-flask:latest
+    image: steffsson/html2md-flask:latest
     container_name: html2md-flask
     environment:
       - PUID=1000
